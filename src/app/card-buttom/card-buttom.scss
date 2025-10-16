@@ -1,0 +1,12 @@
+$bgColor: rgb(42, 185, 78);
+
+.card-buttom {
+        font-size: 16px;
+        text-align: center;
+        margin-top: 10px;
+        border-radius: 25px;
+        background-color: $bgColor;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 10px;
+    };
