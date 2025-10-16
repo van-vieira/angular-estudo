@@ -19,7 +19,17 @@ só é possível declarar um component por modulo, para usar dois components no 
 
 **styleUrl:** vai carregar o estilo do component
 
-![image.png](attachment:8b12b507-aed0-4260-8c02-194fc41742d9:image.png)
+"import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-card',
+  imports: [],
+  templateUrl: './card.html',
+  styleUrl: './card.scss'
+})
+export class Card {
+
+}"
 
 Sempre quando quer utilizar os components de um modulo dentro dos components de um outro modulo, precisa exportar os components do modulo 2 e colocar no modulo 1 que você quer utilizar esses components.
 
@@ -27,13 +37,59 @@ Sempre quando quer utilizar os components de um modulo dentro dos components de 
 
 **MODULO 1:** imports “as pastas do modulo criado”
 
-![image.png](attachment:e1b21456-cfd7-44fa-9434-8812eefab177:image.png)
+"src > app > app.ts > ...
+
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Card } from "./card/card";
+import { CardAzul } from "./card-azul/card-azul";
+import { CardButtom } from "./card-buttom/card-buttom";
+import { CardsModuloModule } from './cards-modulo/cards-modulo-module';
+
+@Component({
+  selector: 'app-root',
+  imports: [ RouterOutlet, CardsModuloModule ],
+  templateUrl: './app.html',
+  styleUrl: './app.scss'
+})
+export class App {
+  protected readonly title = signal('estudos-angular');
+}"
 
 **MODULO 2:** imports “os components criados” ; exports “os components exportados para usar no modulo 1” 
 
-![image.png](attachment:fbf018f5-bd2d-4a6b-a725-f840cf251b83:image.png)
+"app > cards-modulo > cards-modulo-module.ts CardsModuloModule
 
-![image.png](attachment:c48bca03-44a6-4917-8e53-caac2a706e22:image.png)
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CardAzul } from '../card-azul/card-azul';
+import { Card } from '../card/card';
+import { CardButtom } from '../card-buttom/card-buttom';
+
+@NgModule({
+  declarations: [ ],
+  imports: [
+    CommonModule, Card, CardAzul, CardButtom
+  ],
+  exports: [ Card, CardAzul, CardButtom
+  ],
+})
+export class CardsModuloModule { }"
+
+"src
+└── app
+    ├── card
+    ├── card-azul
+    ├── card-buttom
+    ├── cards-modulo
+    │   ├── cards-mo... U  (cards-modulo-module.ts)
+    │   └── ...
+    ├── app.config.ts
+    ├── app.html
+    ├── app.routes.ts
+    ├── app.scss
+    ├── app.spec.ts
+    └── app.ts 1, M"
 
 **Interpolação permite incorporar valores de variaveis JS diretamente no HTML e a sintaxe chave para isso é {{ }}. para acessar propriedades de uma classe precisa utilizar o this.(nome da classe.)**
 
@@ -41,13 +97,29 @@ binding no angular vai ficar ouvindo as propriedades que forem referenciadas no 
 
 caso dentro da interpolação o ultimo valor que o angular resolveu seja undefined, o html não vai fazer o display de nenhum valor.
 
-![image.png](attachment:fffb1944-5476-40d4-b796-151bfe00ef34:image.png)
+"export class Card {
+  plano = {
+    infos: {
+      tipo: 'Simples',
+      preco: 100,
+      // ... (campo com o cursor)
+    }
+  };
+}"
 
-![image.png](attachment:99bbe760-add4-4fd2-afcb-8e2ab05c134a:image.png)
+"<div class="card__plan card__item">Plano <b>{{plano.infos.tipo}}</b></div>
+<div class="card__price card__item">{{plano.infos.preco}}</div>"
 
 **Import de styles:** para criar uma variavel sass de css é só colocar $bgColor no arquivo e usar no codigo.
 
-![image.png](attachment:cdc6a687-41d9-4ac9-b4fb-1184270f7e30:image.png)
+"/* Variáveis de Cores */
+$primary-color: #007bff; // Azul
+$bg-dark: #f8f9fa; // Fundo do sidebar
+$text-dark: #343a40; // Texto principal
+$border-color: #dee2e6; // Borda leve
+$card-bg: #ffffff; // Fundo do cartão
+$page-bg: #f4f6f9; // Fundo geral da página
+$active-link: #e9ecef; // Fundo do link ativo na sidebar"
 
 Para importa-las em outro css é preciso usar o caminho do arquivo original, ex: @import  "../../styles.scss";
 
@@ -55,7 +127,9 @@ Para importa-las em outro css é preciso usar o caminho do arquivo original, ex:
 
 referencia para utilizar: ::ng-deep
 
-![image.png](attachment:ab4dc7ae-8240-4e23-8bf8-c7c1d9197619:image.png)
+"::ng-deep .card-cancel-button {
+  background-color: yellow !important;
+}"
 
 :host é usado para especificar a classe e ser usado em um componente só
 
